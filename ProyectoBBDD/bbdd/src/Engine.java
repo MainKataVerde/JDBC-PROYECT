@@ -23,7 +23,8 @@ public class Engine {
                 case 1:
                     System.out.print("\033[H\033[2J");
                     System.out.println("--------GESTION DE PRODUCTOS--------");
-                    System.out.println("\n1. Insertar producto" + "\n" + "2. Mostrar productos" + "\n" + "3. Volver");
+                    System.out.println("\n1. Insertar producto" + "\n" + "2. Mostrar productos" + "\n"
+                            + "3. Borrar producto" + "\n" + "4. Volver");
                     int modoG = sc.nextInt();
                     switch (modoG) {
                         case 1:
@@ -35,14 +36,22 @@ public class Engine {
                             System.out.print("Stock: ");
                             int stock = sc.nextInt();
                             System.out.print(
-                                    "Seleccione la categoria: 1.Licores \n 2.Mixers \n 3.Frutas \n 4.Decoraciones \n 5. Otros");
+                                    "Seleccione la categoria: 1.Licores | 2.Mixers | 3.Frutas | 4.Decoraciones |5. Otros \nElige: ");
                             int id_categoria = sc.nextInt();
-                            System.out.println("Fecha de caducidad: ");
+                            System.out.print("Fecha de caducidad: ");
                             String fecha_caducidad = sc.next();
                             try {
                                 if (GestionProductos.insertarProducto(nombre, precio, stock, id_categoria,
                                         fecha_caducidad)) {
                                     System.out.println("Producto insertado correctamente");
+                                    System.out.println(GestionProductos.mostrarUltimoProducto());
+                                    System.out
+                                            .println("¿Quieres continuar o cerrar el programa?\n1.Continuar\n2.Cerrar");
+                                    int continuar = sc.nextInt();
+                                    if (continuar == 2) {
+                                        acction = true;
+                                    }
+                                    System.out.print("\033[H\033[2J");
                                 } else {
                                     System.out.println("Error al insertar el producto");
 
@@ -55,7 +64,7 @@ public class Engine {
                             try {
                                 System.out.print("\033[H\033[2J");
                                 System.out.println(GestionProductos.mostrarProductos());
-                                System.out.println("¿Quieres continuar o cerrar el programa? 1.Continuar\n2.Cerrar");
+                                System.out.println("¿Quieres continuar o cerrar el programa?\n1.Continuar\n2.Cerrar");
                                 int continuar = sc.nextInt();
                                 if (continuar == 2) {
                                     acction = true;
@@ -63,6 +72,31 @@ public class Engine {
                             } catch (ClassNotFoundException e) {
                                 e.printStackTrace();
                                 acction = true;
+                            }
+                            break;
+                        case 3:
+                            try {
+                                System.out.print("\033[H\033[2J");
+                                System.out.println(GestionProductos.mostrarProductos());
+                                System.out.println(
+                                        "Introduce el id de los productos a borrar separados con ','\nEscribe aqui: ");
+                                String id_producto = sc.next();
+                                if (GestionProductos.borrarProducto(id_producto)) {
+                                    System.out.print("\033[H\033[2J");
+                                    System.out.println(GestionProductos.mostrarProductos());
+                                    System.out.println("Producto borrado correctamente");
+                                    System.out
+                                            .println("¿Quieres continuar o cerrar el programa?\n1.Continuar\n2.Cerrar");
+                                    int continuar = sc.nextInt();
+                                    if (continuar == 2) {
+                                        acction = true;
+                                    }
+                                    System.out.print("\033[H\033[2J");
+                                } else {
+                                    System.out.println("Error al borrar el producto");
+                                }
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
                             }
                             break;
                         default:

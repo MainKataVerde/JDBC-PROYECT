@@ -80,7 +80,7 @@ public class GestionProductos {
                 productos += "ID: " + rs.getInt("id_producto") + "|Nombre: " + rs.getString("nombre") + "|Precio: "
                         + rs.getDouble("precio") + "|Stock: " + rs.getInt("stock") + "|Categoria: "
                         + rs.getString("id_categoria")
-                        + "\n--------------------------------------------------------------------------|\n";
+                        + "\n";
             }
             return productos;
             // cerramos la sentencia
@@ -94,6 +94,45 @@ public class GestionProductos {
             } catch (SQLException e) {
                 e.printStackTrace();
                 return null;
+            }
+        }
+    }
+
+    public static String mostrarUltimoProducto() throws ClassNotFoundException {
+        String[] ultimo = mostrarProductos()
+                .split("\n");
+
+        return ultimo[ultimo.length - 1];
+    }
+
+    public static Boolean borrarProducto(String id_producto) throws ClassNotFoundException {
+        try {
+
+            String[] ids = id_producto.split(",");
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            // establecemos la conexion
+            conexion = DriverManager.getConnection(URL, USER, PASS);
+            // creamos la sentencia
+            sentencia = conexion.createStatement();
+            // ejecutamos la sentencia
+
+            for (String id : ids) {
+                sentencia.executeUpdate("DELETE FROM productos WHERE id_producto = " + id);
+            }
+            // cerramos la sentencia
+            sentencia.close();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                // cerramos la conexion
+                conexion.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
             }
         }
     }
