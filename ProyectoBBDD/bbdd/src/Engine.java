@@ -1,4 +1,6 @@
 import java.util.Scanner;
+
+import excepciones.NoStockException;
 import gestionar.*;
 
 /**
@@ -12,6 +14,7 @@ public class Engine {
     public void run() {
         Boolean acction = false;
         Scanner sc = new Scanner(System.in);
+        Scanner sc2 = new Scanner(System.in);
         do {
             System.out.print("\033[H\033[2J");
             System.out.println("BIENVENIDO A LA GESTION DE SU TIENDA");
@@ -30,31 +33,61 @@ public class Engine {
                         case 1:
                             System.out.println("Inserte los datos del nuevos producto");
                             System.out.print("Nombre: ");
-                            String nombre = sc.next();
-                            System.out.print("Precio: ");
-                            double precio = sc.nextDouble();
-                            System.out.print("Stock: ");
-                            int stock = sc.nextInt();
-                            System.out.print(
-                                    "Seleccione la categoria: 1.Licores | 2.Mixers | 3.Frutas | 4.Decoraciones |5. Otros \nElige: ");
-                            int id_categoria = sc.nextInt();
-                            System.out.print("Fecha de caducidad: ");
-                            String fecha_caducidad = sc.next();
+                            String nombre = sc2.nextLine();
                             try {
-                                if (GestionProductos.insertarProducto(nombre, precio, stock, id_categoria,
-                                        fecha_caducidad)) {
-                                    System.out.println("Producto insertado correctamente");
-                                    System.out.println(GestionProductos.mostrarUltimoProducto());
+                                if (GestionProductos.existeProducto(nombre)) {
+                                    System.out.println(
+                                            "El procudto " + nombre + " ya existe asique lo añadimeros al stock");
+                                    System.out.print("Inserte la cantidad a introducir: ");
+                                    int stock = sc.nextInt();
+                                    try {
+                                        GestionProductos.actualizarCantidad(nombre, stock,
+                                                GestionProductos.PRODUCTO.COMPRA);
+                                    } catch (NoStockException e) {
+                                        System.out.println(e);
+                                    }
+                                    System.out.println(GestionProductos.elementoBuscado(nombre));
                                     System.out
-                                            .println("¿Quieres continuar o cerrar el programa?\n1.Continuar\n2.Cerrar");
+                                            .println(
+                                                    "¿Quieres continuar o cerrar el programa?\n1.Continuar\n2.Cerrar");
                                     int continuar = sc.nextInt();
                                     if (continuar == 2) {
                                         acction = true;
                                     }
                                     System.out.print("\033[H\033[2J");
                                 } else {
-                                    System.out.println("Error al insertar el producto");
+                                    System.out.print("Precio: ");
+                                    double precio = sc.nextDouble();
+                                    System.out.print("Stock: ");
+                                    int stock = sc.nextInt();
+                                    System.out.print(
+                                            "Seleccione la categoria: 1.Licores | 2.Mixers | 3.Frutas | 4.Decoraciones |5. Otros \nElige: ");
+                                    int id_categoria = sc.nextInt();
+                                    System.out.print("Fecha de caducidad: ");
+                                    String fecha_caducidad = sc.next();
+                                    System.out.print(
+                                            "Seleccione la categoria: 1.Distribuidora Licores MX | 2.Mixers y Más S.A. | 3.Frutas Frescas Express | 4.Hielos Premium |5. Decoraciones Cocteleras \nElige: ");
+                                    int id_proveedor = sc.nextInt();
+                                    try {
+                                        if (GestionProductos.insertarProducto(nombre, precio, stock, id_categoria,
+                                                fecha_caducidad, id_proveedor)) {
+                                            System.out.println("Producto insertado correctamente");
+                                            System.out.println(GestionProductos.elementoBuscado(nombre));
+                                            System.out
+                                                    .println(
+                                                            "¿Quieres continuar o cerrar el programa?\n1.Continuar\n2.Cerrar");
+                                            int continuar = sc.nextInt();
+                                            if (continuar == 2) {
+                                                acction = true;
+                                            }
+                                            System.out.print("\033[H\033[2J");
+                                        } else {
+                                            System.out.println("Error al insertar el producto");
 
+                                        }
+                                    } catch (ClassNotFoundException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             } catch (ClassNotFoundException e) {
                                 e.printStackTrace();
@@ -113,5 +146,6 @@ public class Engine {
         } while (!acction);
         System.out.println("SALIENDO....");
         sc.close();
+        sc2.close();
     }
 }
