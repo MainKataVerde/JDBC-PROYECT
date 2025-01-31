@@ -231,7 +231,7 @@ public class GestionProductos {
                     if ((rs.getInt("stock") - stock) < 0) {
                         throw new NoStockException("No hay stocksuficiente");
                     } else {
-                        int newStock = stock + rs.getInt("stock");
+                        int newStock = stock - rs.getInt("stock");
                         Statement updateStatement = conexion.createStatement();
                         updateStatement.executeUpdate(
                                 "UPDATE productos SET stock = " + newStock + " WHERE nombre = '" + nombre_producto
