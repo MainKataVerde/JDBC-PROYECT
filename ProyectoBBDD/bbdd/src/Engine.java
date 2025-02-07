@@ -7,10 +7,16 @@ import java.util.Scanner;
  * Clase en la que se ejecuta la logia
  */
 public class Engine {
+    /**
+     * Metodo que inicia el programa
+     */
     public void start() {
         run();
     }
 
+    /**
+     * Metodo que ejecuta al logica del programa
+     */
     public void run() {
         Boolean acction = false;
         Scanner sc2;
@@ -87,11 +93,11 @@ public class Engine {
 
                                             }
                                         } catch (ClassNotFoundException e) {
-                                            e.printStackTrace();
+                                            System.err.println(e);
                                         }
                                     }
                                 } catch (ClassNotFoundException e) {
-                                    e.printStackTrace();
+                                    System.err.println(e);
                                 }
                                 break;
                             case 2:
@@ -105,7 +111,7 @@ public class Engine {
                                         acction = true;
                                     }
                                 } catch (ClassNotFoundException e) {
-                                    e.printStackTrace();
+                                    System.err.println(e);
                                     acction = true;
                                 }
                                 break;
@@ -132,7 +138,7 @@ public class Engine {
                                         System.out.println("Error al borrar el producto");
                                     }
                                 } catch (ClassNotFoundException e) {
-                                    e.printStackTrace();
+                                    System.err.println(e);
                                 }
                                 break;
                             default:
@@ -171,7 +177,7 @@ public class Engine {
                                         System.out.println("Error al insertar el proveedor");
                                     }
                                 } catch (ClassNotFoundException e) {
-                                    e.printStackTrace();
+                                    System.err.println(e);
                                 } catch (SQLException ex) {
                                 }
                                 break;
@@ -251,13 +257,11 @@ public class Engine {
                                             acction = true;
                                         }
                                     }
-                                } catch (ClassNotFoundException e) {
-                                    e.printStackTrace();
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
-                                } catch (NoStockException ex) {
+                                } catch (ClassNotFoundException | SQLException | NoStockException e) {
+                                    System.err.println(e);
                                 }
                                 break;
+
                             case 2:
                                 System.out.print("\033[H\033[2J");
                                 System.out.println("--------VENTAS--------");
@@ -282,8 +286,11 @@ public class Engine {
                 }
 
             } while (!acction);
+            sc.close();
+            sc2.close();
             System.out.println("SALIENDO.... Good bye world");
         } catch (ClassNotFoundException ex) {
+            System.out.println(ex);
         }
 
     }

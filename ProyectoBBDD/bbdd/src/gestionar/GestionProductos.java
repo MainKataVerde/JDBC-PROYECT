@@ -11,7 +11,6 @@ import java.sql.Statement;
  * Clase que se encarga de gestionar los productos de la base de datos
  */
 public class GestionProductos {
-    // elementos de conexion a la base de datos
     private static final String URL = "jdbc:mysql://localhost:3306/koktelcitos?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_spanish_ci";
     private static final String USER = "root";
     private static final String PASS = "Kigali2020";
@@ -22,10 +21,6 @@ public class GestionProductos {
 
     public enum PRODUCTO {
         VENTA, COMPRA
-    }
-
-    public GestionProductos() {
-
     }
 
     /**
@@ -61,15 +56,15 @@ public class GestionProductos {
             // cerramos la sentencia
             sentencia.close();
             return true;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.println(e);
             return false;
         } finally {
             try {
                 // cerramos la conexion
                 conexion.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e);
                 return false;
             }
         }
@@ -102,14 +97,14 @@ public class GestionProductos {
             return productos;
             // cerramos la sentencia
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e);
             return null;
         } finally {
             try {
                 // cerramos la conexion
                 conexion.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e);
                 return null;
             }
         }
@@ -154,14 +149,14 @@ public class GestionProductos {
             sentencia.close();
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e);
             return false;
         } finally {
             try {
                 // cerramos la conexion
                 conexion.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e);
                 return false;
             }
         }
@@ -192,14 +187,14 @@ public class GestionProductos {
             }
             // cerramos la sentencia
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e);
             return null;
         } finally {
             try {
                 // cerramos la conexion
                 conexion.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e);
                 return null;
             }
         }
@@ -215,7 +210,7 @@ public class GestionProductos {
      * @param producto        Enum que determina la accion que vamos a hacer puede
      *                        ser tanto VENDER como COMPRAR
      * @throws ClassNotFoundException
-     * @throws NoStockException
+     * @throws NoStockException       Cuando no hay suficiente stock
      */
     public static void actualizarCantidad(String nombre_producto, int stock, PRODUCTO producto)
             throws ClassNotFoundException, NoStockException {
@@ -224,47 +219,51 @@ public class GestionProductos {
         try {
             conexion = DriverManager.getConnection(URL, USER, PASS);
             sentencia = conexion.createStatement();
-            ResultSet rs = sentencia.executeQuery("SELECT * FROM productos WHERE nombre = '" + nombre_producto + "'");
-            if (producto.equals(PRODUCTO.VENTA)) {
-                if (rs.next()) {
-                    if ((rs.getInt("stock") - stock) < 0) {
-                        throw new NoStockException("No hay stocksuficiente");
-                    } else {
-                        int newStock = rs.getInt("stock") - stock;
-                        Statement updateStatement = conexion.createStatement();
-                        updateStatement.executeUpdate(
-                                "UPDATE productos SET stock = " + newStock + " WHERE nombre = '" + nombre_producto
-                                        + "'");
-                        updateStatement.close();
+            try (ResultSet rs = sentencia
+                    .executeQuery("SELECT * FROM productos WHERE nombre = '" + nombre_producto + "'")) {
+                if (producto.equals(PRODUCTO.VENTA)) {
+                    if (rs.next()) {
+                        if ((rs.getInt("stock") - stock) < 0) {
+                            throw new NoStockException("No hay stocksuficiente");
+                        } else {
+                            int newStock = rs.getInt("stock") - stock;
+                            try (Statement updateStatement = conexion.createStatement()) {
+                                updateStatement.executeUpdate(
+                                        "UPDATE productos SET stock = " + newStock + " WHERE nombre = '"
+                                                + nombre_producto
+                                                + "'");
+                            }
+                        }
+                    }
+                } else if (producto.equals(PRODUCTO.COMPRA)) {
+                    if (rs.next()) {
+                        int newStock = rs.getInt("stock") + stock;
+                        try (Statement updateStatement = conexion.createStatement()) {
+                            updateStatement.executeUpdate(
+                                    "UPDATE productos SET stock = " + newStock + " WHERE nombre = '" + nombre_producto
+                                            + "'");
+                        }
                     }
                 }
-            } else if (producto.equals(PRODUCTO.COMPRA)) {
-                if (rs.next()) {
-                    int newStock = rs.getInt("stock") + stock;
-                    Statement updateStatement = conexion.createStatement();
-                    updateStatement.executeUpdate(
-                            "UPDATE productos SET stock = " + newStock + " WHERE nombre = '" + nombre_producto + "'");
-                    updateStatement.close();
-                }
             }
-            rs.close();
             sentencia.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e);
         } finally {
             try {
                 if (conexion != null)
                     conexion.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e);
             }
         }
     }
 
     /**
+     * Metodo que devuelve un string con el el producto buscado
      * 
-     * @param nombre_Producto
-     * @return
+     * @param nombre_Producto Nombre del producto a buscar
+     * @return String con el producto buscado
      * @throws ClassNotFoundException
      */
     public static String elementoBuscado(String nombre_Producto) throws ClassNotFoundException {
@@ -288,23 +287,24 @@ public class GestionProductos {
             return productos;
             // cerramos la sentencia
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e);
             return null;
         } finally {
             try {
                 // cerramos la conexion
                 conexion.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e);
                 return null;
             }
         }
     }
 
     /**
+     * Metodo que busca un producto por su id
      * 
-     * @param id_producto
-     * @return
+     * @param id_producto id del producto
+     * @return String con el producto buscado
      */
     public static String buscarPorID(int id_producto) {
         String productos = "";
@@ -326,22 +326,26 @@ public class GestionProductos {
             }
             return productos;
             // cerramos la sentencia
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException ex) {
+            System.out.println(ex);
             return null;
-        } catch (ClassNotFoundException ex) {
         } finally {
             try {
                 // cerramos la conexion
                 conexion.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e);
                 return null;
             }
         }
-        return productos;
     }
 
+    /**
+     * Metodo que devuelve el precio de un producto
+     * 
+     * @param id_producto id del producto
+     * @return Un float con el precio del producto
+     */
     public static float obtenerPrecioProducto(int id_producto) {
         int precio = 0;
         try {
@@ -359,26 +363,26 @@ public class GestionProductos {
             }
             return precio;
             // cerramos la sentencia
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException ex) {
+            System.out.println(ex);
             return 0;
-        } catch (ClassNotFoundException ex) {
         } finally {
             try {
                 // cerramos la conexion
                 conexion.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e);
                 return 0;
             }
         }
-        return precio;
     }
 
     /**
+     * Metodo que muestra los productos filtrados por el proveedor que los
+     * proporciona
      * 
-     * @param id_proveedor
-     * @return
+     * @param id_proveedor id del proveedor
+     * @return String con los productos del proveedor seleccionado
      * @throws ClassNotFoundException
      */
 
@@ -403,14 +407,14 @@ public class GestionProductos {
             return productos;
             // cerramos la sentencia
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e);
             return null;
         } finally {
             try {
                 // cerramos la conexion
                 conexion.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(e);
                 return null;
             }
         }

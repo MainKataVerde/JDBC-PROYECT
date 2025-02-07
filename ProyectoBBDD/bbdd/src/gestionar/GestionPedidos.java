@@ -20,11 +20,13 @@ public class GestionPedidos {
     private static Statement sentencia2;
 
     /**
+     * Contructora de la clase pedido , cada instacia de esta clase es un pedido
+     * nuevo
      * 
-     * @param precio_total
-     * @param cantidad
-     * @param id_proveedor
-     * @param id_producto
+     * @param precio_total precio total del pedido
+     * @param cantidad     cantidad pedida
+     * @param id_proveedor id del proveedor al que se le solicita el pedido
+     * @param id_producto  id del producto que se solicita
      */
     // hacer que genere un ticket para nosotros con un archivo txt
     public GestionPedidos(float precio_total, int cantidad, int id_proveedor, int id_producto) {
@@ -52,13 +54,8 @@ public class GestionPedidos {
             String nombre = GestionProductos.buscarPorID(id_producto).split("\\|")[1].trim()
                     .split(":")[1].trim();
             GestionProductos.actualizarCantidad(nombre, cantidad, GestionProductos.PRODUCTO.COMPRA);
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-        } catch (NoStockException ex) {
+        } catch (SQLException | ClassNotFoundException | NoStockException e) {
+            System.err.println(e);
         }
-
-        // añadir datos a detalles de pedido
     }
 }

@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;//se usa para manejar excepciones de sql
 
+/**
+ * Clase encargada de gestionar los productos
+ */
 public class GestionProveedores {
     private static final String URL = "jdbc:mysql://localhost:3306/koktelcitos?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_spanish_ci";
     private static final String USER = "root";
@@ -14,13 +17,11 @@ public class GestionProveedores {
     private static Connection conexion;
     private static Statement sentencia;
 
-    public enum ACCION {
-        INSERTAR,
-        ELIMINAR
-    }
-
-    // crear un metodo que muestre todos los proveedores
-
+    /**
+     * Metodo que muestra todos los proveedores
+     * 
+     * @return String con todos los proveedores
+     */
     public static String mostrarProveedores() {
         String proveedores = "";
         try {
@@ -37,12 +38,13 @@ public class GestionProveedores {
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+            System.err.println(e);
         }
         return proveedores;
     }
 
     /**
+     * Metodo que inserta un nuevo proveedor
      * 
      * @param nombre
      * @param contacto
@@ -55,15 +57,19 @@ public class GestionProveedores {
             throws ClassNotFoundException, SQLException {
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conexion = DriverManager.getConnection(URL, USER, PASS);
-            sentencia = conexion.createStatement();
+            if (!existeProveedor(nombre)) {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                conexion = DriverManager.getConnection(URL, USER, PASS);
+                sentencia = conexion.createStatement();
 
-            String sql = "INSERT INTO proveedores (nombre, contacto, direccion) VALUES ('"
-                    + nombre + "', '" + contacto + "', '" + direccion + "')";
+                String sql = "INSERT INTO proveedores (nombre, contacto, direccion) VALUES ('"
+                        + nombre + "', '" + contacto + "', '" + direccion + "')";
 
-            sentencia.executeUpdate(sql);
-            return true;
+                sentencia.executeUpdate(sql);
+                return true;
+            } else {
+                return false;
+            }
 
         } catch (SQLException e) {
             System.out.println("Error al insertar proveedor: " + e.getMessage());
@@ -74,5 +80,28 @@ public class GestionProveedores {
             if (conexion != null)
                 conexion.close();
         }
+    }
+
+    /**
+     * Metodo que dice si un proveedor existe ya en la base de datos
+     * 
+     * @param nombre nombre del proveedor
+     * @return true si existe, false si no
+     */
+    public static Boolean existeProveedor(String nombre) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conexion = DriverManager.getConnection(URL, USER, PASS);
+            sentencia = conexion.createStatement();
+
+            ResultSet rs = sentencia.executeQuery("SELECT * FROM proveedores WHERE nombre = '" + nombre + "'");
+
+            return rs.next();
+
+        } catch (SQLException | ClassNotFoundException e) {
+            System.err.println(e);
+            return false;
+        }
+
     }
 }
