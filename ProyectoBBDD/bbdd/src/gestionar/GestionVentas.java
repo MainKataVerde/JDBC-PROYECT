@@ -93,7 +93,7 @@ public class GestionVentas {
             sentencia = conexion.createStatement();
 
             // ejecutamos la sentencia
-            ResultSet rs = sentencia.executeQuery("SELECT * FROM ventas");
+            ResultSet rs = sentencia.executeQuery("SELECT * FROM ventas NATURAL JOIN detalles_ventas");
 
             while (rs.next()) {
                 ventas += "ID: " + rs.getInt("id_ventas") + "|ID Producto: " + rs.getInt("id_producto")

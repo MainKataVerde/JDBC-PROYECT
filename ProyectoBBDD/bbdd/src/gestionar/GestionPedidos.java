@@ -58,4 +58,36 @@ public class GestionPedidos {
             System.err.println(e);
         }
     }
+
+    public static String mostrarPedidos() {
+        String pedido = "";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conexion = DriverManager.getConnection(URL, USER, PASS);
+            sentencia = conexion.createStatement();
+
+            ResultSet rs = sentencia
+                    .executeQuery("SELECT * FROM pedidos NATURAL JOIN detalles_pedidos NATURAL JOIN productos");
+
+            while (rs.next()) {
+                pedido += "ID Pedido : " + rs.getString("id_pedido") + " | ID Proveedor : "
+                        + rs.getString("id_proveedor") + " | Fecha Del Pedido : " + rs.getString("fecha_pedido")
+                        + " | ID Cantidad Total : " + rs.getInt("cantidad_total") + " | Nombre Producto : "
+                        + rs.getString("nombre") + " | Cantidad : " + rs.getInt("cantidad") + " | Subtotal : "
+                        + rs.getInt("subtotal") + "\n";
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e);
+        }
+
+        return pedido;
+    }
+
+    public static String ultimoPedido() {
+        String[] ultimo = mostrarPedidos()
+                .split("\n");
+
+        return ultimo[ultimo.length - 1];
+    }
 }

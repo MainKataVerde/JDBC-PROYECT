@@ -208,6 +208,8 @@ public class Engine {
                                 // hacer que elijan a los preoveedores y cuando los elige salgan los productos
                                 // de ese proveedor y luego eliges el producto
                                 System.out.println(GestionProductos.buscarPorID(id_producto));
+                                System.out.println("--------RECIVO PEDIDO--------");
+                                System.out.println(GestionPedidos.ultimoPedido());
                                 System.out
                                         .println(
                                                 "¿Quieres continuar o cerrar el programa?\n1.Continuar\n2.Cerrar");
