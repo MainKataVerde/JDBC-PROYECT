@@ -1,0 +1,12 @@
+
+MODELO RELACIONAL:
+
+1. CATEGORIAS (id_categoria INT PRIMARY KEY, nombre_categoria VARCHAR(50) UNIQUE)
+2. PROVEEDORES (id_proveedor INT PRIMARY KEY, nombre VARCHAR(50), contacto VARCHAR(50), direccion VARCHAR(50))
+3. PEDIDOS (id_pedido INT PRIMARY KEY, id_proveedor INT FOREIGN KEY REFERENCES PROVEEDORES(id_proveedor), fecha_pedido DATE, cantidad_total INT)
+4. USUARIO (id_usuario INT PRIMARY KEY, nombre_usuario VARCHAR(50), contrasena VARCHAR(50), rol ENUM('administrador', 'empleado'))
+5. PRODUCTOS (id_producto INT PRIMARY KEY, nombre VARCHAR(50), id_categoria INT FOREIGN KEY REFERENCES CATEGORIAS(id_categoria), 
+   precio DECIMAL(10,2), stock INT, fecha_caducidad DATE, id_proveedor INT FOREIGN KEY REFERENCES PROVEEDORES(id_proveedor))
+6. VENTAS (id_ventas INT PRIMARY KEY, id_producto INT FOREIGN KEY REFERENCES PRODUCTOS(id_producto), cantidad INT, subtotal DECIMAL(10,2))
+7. DETALLES_PEDIDOS (id_detalle_pedido INT PRIMARY KEY, id_pedido INT FOREIGN KEY REFERENCES PEDIDOS(id_pedido), 
+   id_producto INT FOREIGN KEY REFERENCES PRODUCTOS(id_producto), cantidad INT, subtotal DECIMAL(10,2))

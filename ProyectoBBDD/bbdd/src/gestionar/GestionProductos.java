@@ -1,12 +1,11 @@
 package gestionar;
 
-import java.sql.Connection;//se usar para establecer la conexcion
-import java.sql.DriverManager;// gestiona los driver de la base de datos , crea conexiones
-import java.sql.ResultSet;
-import java.sql.SQLException;//se usa para manejar excepciones de sql
-import java.sql.Statement;//se usa para ejecutar sentencias sql
-
-import excepciones.NoStockException;
+import excepciones.NoStockException;//se usar para establecer la conexcion
+import java.sql.Connection;// gestiona los driver de la base de datos , crea conexiones
+import java.sql.DriverManager;
+import java.sql.ResultSet;//se usa para manejar excepciones de sql
+import java.sql.SQLException;//se usa para ejecutar sentencias sql
+import java.sql.Statement;
 
 /**
  * Clase que se encarga de gestionar los productos de la base de datos
@@ -231,7 +230,7 @@ public class GestionProductos {
                     if ((rs.getInt("stock") - stock) < 0) {
                         throw new NoStockException("No hay stocksuficiente");
                     } else {
-                        int newStock = stock - rs.getInt("stock");
+                        int newStock = rs.getInt("stock") - stock;
                         Statement updateStatement = conexion.createStatement();
                         updateStatement.executeUpdate(
                                 "UPDATE productos SET stock = " + newStock + " WHERE nombre = '" + nombre_producto
@@ -279,6 +278,121 @@ public class GestionProductos {
 
             // ejecutamos la sentencia
             ResultSet rs = sentencia.executeQuery("SELECT * FROM productos WHERE nombre = '" + nombre_Producto + "'");
+
+            while (rs.next()) {
+                productos += "ID: " + rs.getInt("id_producto") + "|Nombre: " + rs.getString("nombre") + "|Precio: "
+                        + rs.getDouble("precio") + "|Stock: " + rs.getInt("stock") + "|Categoria: "
+                        + rs.getString("id_categoria")
+                        + "\n";
+            }
+            return productos;
+            // cerramos la sentencia
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                // cerramos la conexion
+                conexion.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param id_producto
+     * @return
+     */
+    public static String buscarPorID(int id_producto) {
+        String productos = "";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            // establecemos la conexion
+            conexion = DriverManager.getConnection(URL, USER, PASS);
+            // creamos la sentencia
+            sentencia = conexion.createStatement();
+
+            // ejecutamos la sentencia
+            ResultSet rs = sentencia.executeQuery("SELECT * FROM productos WHERE id_producto = " + id_producto);
+
+            while (rs.next()) {
+                productos += "ID: " + rs.getInt("id_producto") + "|Nombre: " + rs.getString("nombre") + " |Precio: "
+                        + rs.getDouble("precio") + "|Stock: " + rs.getInt("stock") + "|Categoria: "
+                        + rs.getString("id_categoria")
+                        + "\n";
+            }
+            return productos;
+            // cerramos la sentencia
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } catch (ClassNotFoundException ex) {
+        } finally {
+            try {
+                // cerramos la conexion
+                conexion.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return productos;
+    }
+
+    public static float obtenerPrecioProducto(int id_producto) {
+        int precio = 0;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            // establecemos la conexion
+            conexion = DriverManager.getConnection(URL, USER, PASS);
+            // creamos la sentencia
+            sentencia = conexion.createStatement();
+
+            // ejecutamos la sentencia
+            ResultSet rs = sentencia.executeQuery("SELECT precio FROM productos WHERE id_producto = " + id_producto);
+
+            while (rs.next()) {
+                precio = rs.getInt("precio");
+            }
+            return precio;
+            // cerramos la sentencia
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        } catch (ClassNotFoundException ex) {
+        } finally {
+            try {
+                // cerramos la conexion
+                conexion.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
+        return precio;
+    }
+
+    /**
+     * 
+     * @param id_proveedor
+     * @return
+     * @throws ClassNotFoundException
+     */
+
+    public static String mostrarProductosPorProveedor(int id_proveedor) throws ClassNotFoundException {
+        String productos = "";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            // establecemos la conexion
+            conexion = DriverManager.getConnection(URL, USER, PASS);
+            // creamos la sentencia
+            sentencia = conexion.createStatement();
+
+            // ejecutamos la sentencia
+            ResultSet rs = sentencia.executeQuery("SELECT * FROM productos WHERE id_proveedor = " + id_proveedor);
 
             while (rs.next()) {
                 productos += "ID: " + rs.getInt("id_producto") + "|Nombre: " + rs.getString("nombre") + "|Precio: "
