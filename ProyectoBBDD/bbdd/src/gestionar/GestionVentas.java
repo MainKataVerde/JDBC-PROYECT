@@ -87,6 +87,12 @@ public class GestionVentas {
         }
     }
 
+    /**
+     * Metodo que muestra todas las ventas de la base de datos
+     * 
+     * @return String con todas las ventas
+     * @throws ClassNotFoundException
+     */
     public static String mostrarVentas() throws ClassNotFoundException {
         String ventas = "";
         try {
@@ -119,6 +125,12 @@ public class GestionVentas {
         }
     }
 
+    /**
+     * Metodo que devuelve la ultima venta realizada
+     * 
+     * @return String con los datos de la ultima venta
+     * @throws ClassNotFoundException
+     */
     public static String ultimaVenta() throws ClassNotFoundException {
         String[] ultimo = mostrarVentas()
                 .split("\n");
@@ -126,6 +138,10 @@ public class GestionVentas {
         return ultimo[ultimo.length - 1];
     }
 
+    /**
+     * Metodo encargado de generar recivos de Venta en un txt , cada pedido es un
+     * txt nuevo
+     */
     public static void recivoVenta() {
         try {
             String VentaNum = mostrarVentas().split("\\|")[1].trim()

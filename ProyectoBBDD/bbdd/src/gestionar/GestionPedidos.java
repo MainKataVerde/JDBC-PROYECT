@@ -88,6 +88,12 @@ public class GestionPedidos {
         return pedido;
     }
 
+    /**
+     * Metodo que devuelve el ultimo pedido realizada
+     * 
+     * @return String con los datos de la ultima venta
+     * @throws ClassNotFoundException
+     */
     public static String ultimoPedido() {
         String[] ultimo = mostrarPedidos()
                 .split("\n");
@@ -96,7 +102,9 @@ public class GestionPedidos {
     }
 
     /**
-     * 
+     * Metodo encargado de generar recivos de los pedidos en un txt , cada pedido es
+     * un
+     * txt nuevo
      */
     public static void recivoPedido(int PedidoNum) {
         String ruta = "C:/Users/PORTATIL DE MAKINON/Desktop/CLASES OMG/TRABAJOS/JONY/2ºDAM/Acceso_a_datos/ProyectoBBDD/bbdd/src/tickets/pedidos/pedido_"
