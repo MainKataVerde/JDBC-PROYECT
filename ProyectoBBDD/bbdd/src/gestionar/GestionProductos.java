@@ -86,12 +86,14 @@ public class GestionProductos {
             sentencia = conexion.createStatement();
 
             // ejecutamos la sentencia
-            ResultSet rs = sentencia.executeQuery("SELECT * FROM productos");
+            ResultSet rs = sentencia
+                    .executeQuery("SELECT * FROM productos NATURAL JOIN proveedores NATURAL JOIN categorias ;");
 
             while (rs.next()) {
                 productos += "ID: " + rs.getInt("id_producto") + "|Nombre: " + rs.getString("nombre") + "|Precio: "
                         + rs.getDouble("precio") + "|Stock: " + rs.getInt("stock") + "|Categoria: "
-                        + rs.getString("id_categoria")
+                        + rs.getString("nombre_categoria") + "|Proveedor: "
+                        + rs.getString("nombre_proveedor")
                         + "\n";
             }
             return productos;
