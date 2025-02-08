@@ -32,7 +32,7 @@ public class GestionProveedores {
             ResultSet rs = sentencia.executeQuery("SELECT * FROM proveedores");
 
             while (rs.next()) {
-                proveedores += "ID: " + rs.getInt("id_proveedor") + "| Nombre: " + rs.getString("nombre")
+                proveedores += "ID: " + rs.getInt("id_proveedor") + "| Nombre: " + rs.getString("nombre_proveedor")
                         + "| Telefono: "
                         + rs.getString("contacto") + "| Direccion: " + rs.getString("direccion") + "\n";
             }

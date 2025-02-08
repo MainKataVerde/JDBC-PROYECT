@@ -1,11 +1,14 @@
 package gestionar;
 
 import excepciones.NoStockException;
-import java.sql.Connection;//se usar para establecer la conexcion
-import java.sql.DriverManager;// gestiona los driver de la base de datos , crea conexiones
+import java.io.File;//se usar para establecer la conexcion
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;// gestiona los driver de la base de datos , crea conexiones
+import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;//se usa para manejar excepciones de sql
+import java.sql.SQLException;//se usa para manejar excepciones de sql
+import java.sql.Statement;
 
 /**
  * Clase en la que gestrionamos los pedidos hacia los proveedores
@@ -54,6 +57,7 @@ public class GestionPedidos {
             String nombre = GestionProductos.buscarPorID(id_producto).split("\\|")[1].trim()
                     .split(":")[1].trim();
             GestionProductos.actualizarCantidad(nombre, cantidad, GestionProductos.PRODUCTO.COMPRA);
+            recivoPedido(id_pedido);
         } catch (SQLException | ClassNotFoundException | NoStockException e) {
             System.err.println(e);
         }
@@ -89,5 +93,29 @@ public class GestionPedidos {
                 .split("\n");
 
         return ultimo[ultimo.length - 1];
+    }
+
+    /**
+     * 
+     */
+    public static void recivoPedido(int PedidoNum) {
+        String ruta = "C:/Users/PORTATIL DE MAKINON/Desktop/CLASES OMG/TRABAJOS/JONY/2ºDAM/Acceso_a_datos/ProyectoBBDD/bbdd/src/tickets/pedidos/pedido_"
+                + PedidoNum + ".txt";
+        File archivo = new File(ruta);
+
+        try {
+            if (archivo.createNewFile()) {
+                System.out.println("Ticket de Compra creado " + archivo.getName());
+
+            }
+
+            try (FileWriter fw = new FileWriter(archivo)) {
+                fw.write(ultimoPedido());
+            }
+
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
     }
 }

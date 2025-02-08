@@ -1,6 +1,9 @@
 package gestionar;
 
 import excepciones.NoStockException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -65,7 +68,8 @@ public class GestionVentas {
                                     + ")");
 
                     GestionProductos.actualizarCantidad(nombreProducto, cantidad, GestionProductos.PRODUCTO.VENTA);
-
+                    System.out.println("Generando recivo de venta");
+                    recivoVenta();
                     return true;
                 }
 
@@ -93,7 +97,7 @@ public class GestionVentas {
             sentencia = conexion.createStatement();
 
             // ejecutamos la sentencia
-            ResultSet rs = sentencia.executeQuery("SELECT * FROM ventas NATURAL JOIN detalles_ventas");
+            ResultSet rs = sentencia.executeQuery("SELECT * FROM ventas");
 
             while (rs.next()) {
                 ventas += "ID: " + rs.getInt("id_ventas") + "|ID Producto: " + rs.getInt("id_producto")
@@ -120,5 +124,27 @@ public class GestionVentas {
                 .split("\n");
 
         return ultimo[ultimo.length - 1];
+    }
+
+    public static void recivoVenta() {
+        try {
+            String VentaNum = mostrarVentas().split("\\|")[1].trim()
+                    .split(":")[1].trim();
+
+            String ruta = "C:/Users/PORTATIL DE MAKINON/Desktop/CLASES OMG/TRABAJOS/JONY/2ºDAM/Acceso_a_datos/ProyectoBBDD/bbdd/src/tickets/ventas/venta_"
+                    + VentaNum + ".txt";
+            File archivo = new File(ruta);
+            if (archivo.createNewFile()) {
+                System.out.println("Ticket de Compra creado " + archivo.getName());
+
+            }
+
+            try (FileWriter fw = new FileWriter(archivo)) {
+                fw.write(ultimaVenta());
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println(e);
+        }
     }
 }
